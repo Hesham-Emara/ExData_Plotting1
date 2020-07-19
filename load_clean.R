@@ -1,0 +1,12 @@
+library(lubridate)
+library(dplyr)
+download.file("https://d396qusza40orc.cloudfront.net/exdata%2Fdata%2Fhousehold_power_consumption.zip",destfile = "./first_proj.zip",method = "curl")
+unzip("first_proj.zip")
+electric_power_consumption <- read.table("household_power_consumption.txt",sep = ";", colClasses = c("character","character","numeric","numeric","numeric","numeric","numeric","numeric","numeric"),header = TRUE, na.strings = "?")
+electric_power_consumption$Date <- dmy(electric_power_consumption$Date)
+electric_power_consumption$Time <- hms(electric_power_consumption$Time)
+electric_power_consumption <- subset(electric_power_consumption,Date >= "2007-2-1" & Date <= "2007-2-2" )
+electric_power_consumption <- electric_power_consumption[complete.cases(electric_power_consumption),]
+electric_power_consumption <- mutate(electric_power_consumption,dateTime = Date + Time)
+electric_power_consumption <- select(electric_power_consumption,-c(Date,Time))
+electric_power_consumption$dateTime <- ymd_hms(electric_power_consumption$dateTime)
